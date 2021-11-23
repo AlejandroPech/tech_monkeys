@@ -1,10 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+typedef BoolCallback = void Function(bool val);
 //create a checkbox widget
 class Checkboxes extends StatefulWidget {
-  const Checkboxes({Key? key, required this.title}) : super(key: key);
+  final BoolCallback checked;
   final String title;
+  const Checkboxes({Key? key, required this.title,required this.checked}) : super(key: key);
 
   @override
   _CheckboxState createState() => _CheckboxState();
@@ -20,25 +22,9 @@ class _CheckboxState extends State<Checkboxes> {
       onChanged: (bool? val) {
         setState(() {
           isChecked = val!;
+          widget.checked(val);
         });
       },
     );
   }
 }
-
- Widget textBox(String text, Icon icon, TextInputType keyBoardType) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
-      child: TextFormField(
-        decoration: InputDecoration(
-          prefixIcon: icon,
-          hintText: text,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(15),
-          ),
-          contentPadding: const EdgeInsets.all(5),
-        ),
-        keyboardType: keyBoardType,
-      ),
-    );
- }
