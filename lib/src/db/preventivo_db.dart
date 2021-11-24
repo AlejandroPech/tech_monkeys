@@ -1,58 +1,48 @@
 part of 'reporte_servicio_db.dart';
 
 class _PreventivoDataBase {
-  static final _PreventivoDataBase instance=_PreventivoDataBase._init();
   
-  static Database? _database;
-
-  _PreventivoDataBase._init();
-
-  Future<Database> get database async{
-    if(_database!= null) return _database!;
-
-    _database = await _initDB('reportes.db');
-
-    return _database!;
+  static Future<ServicioPreventivo> create(ServicioPreventivo preventivo)async {
+    final db= await _DatabaseReportes.instance.database;
+    final id=await db.insert(tablePreventivo, ServicioPreventivo.toJson(preventivo));
+    preventivo.id=id;
+    return preventivo;
   }
 
-  Future<Database> _initDB(String filePath)async {
-    final dbPath= await getDatabasesPath();
-    final path=join(dbPath,filePath);
+  static Future<ServicioPreventivo> read(int id)async{
+    final db= await _DatabaseReportes.instance.database;
 
-    return await openDatabase(path,version: 1,onCreate: _createDB );
+    final maps= await db.query(
+      tablePreventivo,
+      columns: PreventivoFields.values,
+      where: '${PreventivoFields.reporteId} = ?',
+      whereArgs: [id],
+    );
+
+    if(maps.isNotEmpty){
+      return ServicioPreventivo.fromJson(maps.first);
+    }else{
+      throw Exception('ID $id no encontrado');
+    }
   }
 
-  Future _createDB(Database db, int version)async{
-    const idType = 'INTEGER PRIMARY KEY AUTOINCREMENT';
-    const textType = 'TEXT NOT NULL';
-    const boolType = 'BOOLEAN NOT NULL';
-    const intType='INTEGER';
-    await db.execute('''
-    CREATE TABLE $tablePreventivo (
-      ${PreventivoFields.id} $idType
-      ${PreventivoFields.lavadoCondensador} $boolType
-      ${PreventivoFields.limpAjusteCompElectrico} $boolType
-      ${PreventivoFields.insAjustePotencia} $boolType
-      ${PreventivoFields.limpBandejaDrenaje} $boolType
-      ${PreventivoFields.verificarSetPoint} $boolType
-      ${PreventivoFields.revAislamientoDuctos} $boolType
-      ${PreventivoFields.revCompElectrico} $boolType
-      ${PreventivoFields.verificarConexElectrico} $boolType
-      ${PreventivoFields.verifEstructuraEquipo} $boolType
-      ${PreventivoFields.lavadoEvaporador} $boolType
-      ${PreventivoFields.limpRejillaDifusores} $boolType
-      ${PreventivoFields.lavadoFiltroAireEvaporadr} $boolType
-      ${PreventivoFields.ajusteCargaRefrig} $boolType
-      ${PreventivoFields.revBalAspas} $boolType
-      ${PreventivoFields.revMotorEvaporador} $boolType
-      ${PreventivoFields.revMotorCondensador} $boolType
-      ${PreventivoFields.balanceVoltaje} $boolType
-      ${PreventivoFields.balanceTurbinaChamaquera} $boolType
-      ${PreventivoFields.peinarAletasSerpentines} $boolType
-      ${PreventivoFields.otraActividad} $textType
-      ${PreventivoFields.reporteId} $intType
-      FOREIGN KEY(${PreventivoFields.reporteId}) REFERENCES $tableReporte(_id)
-    )
-    ''');
+  static Future<int> update(ServicioPreventivo preventivo)async{
+    final db=await _DatabaseReportes.instance.database;
+
+    return db.update(
+      tablePreventivo, 
+      ServicioPreventivo.toJson(preventivo),
+      where: '${PreventivoFields.id} = ?',
+      whereArgs: [preventivo.id],
+    );
+  }
+
+  static Future<int> delete(int id)async{
+    final db= await _DatabaseReportes.instance.database;
+    return await db.delete(
+      tablePreventivo,
+      where: '${PreventivoFields.reporteId} = ?',
+      whereArgs: [id],
+    );
   }
 }

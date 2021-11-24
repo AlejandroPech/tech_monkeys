@@ -7,6 +7,7 @@ import 'package:tech_monkeys/src/api/pdf_api.dart';
 import 'package:tech_monkeys/src/components/documents/body_correctivo.dart';
 import 'package:tech_monkeys/src/components/documents/footer.dart';
 import 'package:tech_monkeys/src/components/signature_pad.dart';
+import 'package:tech_monkeys/src/db/reporte_servicio_db.dart';
 import 'package:tech_monkeys/src/models/reporte_servicio.dart';
 import 'package:tech_monkeys/src/models/servicio_correctivo.dart';
 import '../components/documents/head.dart';
@@ -50,6 +51,10 @@ class _CorrectivoPageState extends State<CorrectivoPage> {
               SignaturePad(keySignaturePad: keySignatureCustomerPad),
               SignaturePad(keySignaturePad: keySignatureTecnicoPad),
               ElevatedButton(
+                child: const Text("Guardar"),
+                onPressed: guardar,
+              ),
+              ElevatedButton(
                 child: const Text("Generar PDF"),
                 onPressed: onSubmit,
               ),
@@ -87,5 +92,10 @@ class _CorrectivoPageState extends State<CorrectivoPage> {
     final imageTecnico=await keySignatureTecnicoPad.currentState?.toImage();
     final imageSignatureTecnico= await imageTecnico!.toByteData(format: ui.ImageByteFormat.png);
     reporteServicio.signatureTecnico=imageSignatureTecnico!.buffer.asUint8List();
+    if(reporteServicio.id==null){
+      await ReporteCorrectivoDataBase.createCorrectivo(reporteServicio);
+    }else{
+      await ReporteCorrectivoDataBase.updateCorrectivo(reporteServicio);
+    }
   }
 }

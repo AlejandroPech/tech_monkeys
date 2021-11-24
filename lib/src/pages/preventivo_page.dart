@@ -51,7 +51,7 @@ class _PreventivoPageState extends State<PreventivoPage>{
               SignaturePad(keySignaturePad: keySignatureCustomerPad),
               SignaturePad(keySignaturePad: keySignatureTecnicoPad),
               ElevatedButton(
-                child: const Text("Guardar PDF"),
+                child: const Text("Guardar"),
                 onPressed: guardar,
               ),
               ElevatedButton(
@@ -93,7 +93,9 @@ class _PreventivoPageState extends State<PreventivoPage>{
     final imageSignatureTecnico= await imageTecnico!.toByteData(format: ui.ImageByteFormat.png);
     reporteServicio.signatureTecnico=imageSignatureTecnico!.buffer.asUint8List();
     if(reporteServicio.id==null){
-      await ReporteServicioDataBase.instance.create(reporteServicio);
-    } 
+      await ReportePreventivoDataBase.createPreventivo(reporteServicio);
+    }else{
+      await ReportePreventivoDataBase.updatePreventivo(reporteServicio);
+    }
   }
 }

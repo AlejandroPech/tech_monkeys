@@ -31,13 +31,20 @@ class _HomePageState extends State<HomePage> {
         ),
         body:const TabBarView(
           children: [
-            SafeArea(
-            child: TabListPreventivos(),
-          ),SafeArea(
-            child: TabListCorrectivos(),
-          ),
+            TabListPreventivos(),
+            TabListCorrectivos(),
           ],
         ),
+        floatingActionButton: FloatingActionButton(
+        child: const Icon(Icons.add),
+        onPressed: (){
+          if( DefaultTabController.of(context)!.index==0){
+            Navigator.pushNamed(context,"Preventivo"); 
+          }else if( DefaultTabController.of(context)!.index==1){
+            Navigator.pushNamed(context,"Correctivo"); 
+          }
+        }
+      ),
       ),
     );
   }
