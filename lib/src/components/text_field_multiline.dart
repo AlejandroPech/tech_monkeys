@@ -4,14 +4,20 @@ typedef StringCallback = void Function(String val);
 class TextFieldMultiline extends StatefulWidget {
   final StringCallback callbackString;
   final String title;
-  const TextFieldMultiline({Key? key,required this.callbackString,required this.title}) : super(key: key);
+  final String initialValue;
+  const TextFieldMultiline({Key? key,required this.callbackString,required this.title,required this.initialValue}) : super(key: key);
 
   @override
   _TextFieldMultilineState createState() => _TextFieldMultilineState();
 }
 
 class _TextFieldMultilineState extends State<TextFieldMultiline> {
-  final TextEditingController controller = TextEditingController();
+  late TextEditingController _controller;
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(text: widget.initialValue);
+  }
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -21,6 +27,7 @@ class _TextFieldMultilineState extends State<TextFieldMultiline> {
         children: [
           Text(widget.title),
           TextFormField(
+            controller: _controller,
             keyboardType: TextInputType.text,
             maxLines: 5,
             decoration: InputDecoration(

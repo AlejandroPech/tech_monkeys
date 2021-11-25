@@ -4,31 +4,22 @@ import 'package:tech_monkeys/src/db/reporte_servicio_db.dart';
 import 'package:tech_monkeys/src/models/reporte_servicio.dart';
 
 class TabListCorrectivos extends StatefulWidget {
-  const TabListCorrectivos({Key? key}) : super(key: key);
+  final List<ReporteServicio> reportes;
+  const TabListCorrectivos({Key? key,required this.reportes}) : super(key: key);
 
   @override
   _TabListCorrectivosState createState() => _TabListCorrectivosState();
 }
 
-class _TabListCorrectivosState extends State<TabListCorrectivos> with AutomaticKeepAliveClientMixin {
+class _TabListCorrectivosState extends State<TabListCorrectivos>  {
   late List<ReporteServicio> reportes;
   bool isLoading = false;
 
   @override
   void initState() {
     super.initState();
-    refreshReportes();
+    reportes=widget.reportes;
   }
-
-  @override
-  void dispose() {
-    ReporteCorrectivoDataBase.close();
-    super.dispose();
-  }
-
-  @override
-  bool get wantKeepAlive => true;
-
   Future refreshReportes() async {
     setState(() => isLoading = true);
 
@@ -38,23 +29,27 @@ class _TabListCorrectivosState extends State<TabListCorrectivos> with AutomaticK
   }
   @override
   Widget build(BuildContext context) {
-    super.build(context);
-    return Scaffold(
-      body:Container(
-        child: isLoading
-          ?const Center(child: CircularProgressIndicator())
-          : reportes.isEmpty
-            ?const Center(child: Text("No hay reportes aún"),)
-            :ListView.builder(
-              itemCount: reportes.length,
-              itemBuilder: (BuildContext context,int index){
-                return ListTileReport(
-                  title:reportes[index].cliente,
-                  index: index,
-                  id: reportes[index].id!,
-                );
-              }
-            ),
+    setState(() {
+      reportes=widget.reportes;
+    });
+    return RefreshIndicator(
+      onRefresh: ()async {refreshReportes();  },
+      child: Scaffold(
+        body:Container(
+          child: isLoading
+            ?const Center(child: CircularProgressIndicator())
+            : reportes.isEmpty
+              ?const Center(child: Text("No hay reportes aún"),)
+              :ListView.builder(
+                itemCount: reportes.length,
+                itemBuilder: (BuildContext context,int index){
+                  return ListTileReport(
+                    servicio:reportes[index],
+                    index: index,
+                  );
+                }
+              ),
+        ),
       ),
     );
   }

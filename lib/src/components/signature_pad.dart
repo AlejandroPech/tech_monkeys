@@ -1,18 +1,39 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_signaturepad/signaturepad.dart';
+
+typedef BoolCallback = void Function(bool val);
+typedef Uint8ListCallback = void Function(Uint8List? val);
 class SignaturePad extends StatefulWidget {
+  final GlobalKey<SfSignaturePadState> keySignaturePad;
+  final String firmante;
+  final BoolCallback boolCallback;
+  final Uint8ListCallback uint8listCallback;
+  final Uint8List? signature;
+  final bool isSigned;
   const SignaturePad({
     Key? key,
     required this.keySignaturePad,
+    required this.firmante,
+    required this.boolCallback,
+    required this.uint8listCallback,
+    required this.signature,
+    required this.isSigned,
   }) : super(key: key);
 
-  final GlobalKey<SfSignaturePadState> keySignaturePad;
 
   @override
   State<SignaturePad> createState() => _SignaturePadState();
 }
 
 class _SignaturePadState extends State<SignaturePad> with AutomaticKeepAliveClientMixin{
+  late bool isSigned;
+  @override
+  void initState() {
+    super.initState();
+    isSigned=widget.isSigned;
+  }
   @override
   bool get wantKeepAlive => true;
   @override
@@ -23,12 +44,35 @@ class _SignaturePadState extends State<SignaturePad> with AutomaticKeepAliveClie
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text("SignaturePad del Tecnico"),
-          SfSignaturePad(
-            key: widget.keySignaturePad,
-            backgroundColor: Colors.yellow.withOpacity(0.02),
-            
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text("Firma del "+widget.firmante),
+              TextButton(
+                onPressed:() async {
+                  setState(() {
+                    if(widget.keySignaturePad.currentState!=null){
+                      widget.keySignaturePad.currentState!.clear();
+                    }
+                    isSigned=false;
+                    widget.boolCallback(false);
+                    widget.uint8listCallback(null);
+                  });
+                },
+                child:const Text("Limpiar")
+              )
+            ],
           ),
+          !isSigned
+          ?SfSignaturePad(
+              key: widget.keySignaturePad,
+              backgroundColor: Colors.yellow.withOpacity(0.02),
+              onDrawEnd: (){
+                isSigned=true;
+                widget.boolCallback(true);
+              },
+            )
+          :Image.memory(widget.signature!)            
         ],
       ),
     );

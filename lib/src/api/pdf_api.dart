@@ -9,16 +9,13 @@ import 'package:tech_monkeys/src/models/reporte_servicio.dart';
 class PdfApi{
 
   static Future<File> generatePDFPreventivo({
-    required ByteData imageSignatureCustomer,
-    required ByteData imageSignatureTecnico,
+    required Uint8List imageSignatureCustomer,
+    required Uint8List imageSignatureTecnico,
     required ReporteServicio reporteServicio
   })async{
     final pdf=pw.Document();
     final ByteData data = await rootBundle.load('assets/images/logo.png');
     final Uint8List logo=data.buffer.asUint8List();
-
-    final Uint8List firmaCustomer= imageSignatureCustomer.buffer.asUint8List();
-    final Uint8List firmaTecnico= imageSignatureTecnico.buffer.asUint8List();
 
     final String checkIcon = await rootBundle.loadString('assets/images/check.svg');
     final preventivo = reporteServicio.servicioPreventivo;
@@ -62,7 +59,7 @@ class PdfApi{
           pw.Container(
             height: 75
           ),
-          MethodPdfApi.rowSignatures(firmaCustomer, firmaTecnico),
+          MethodPdfApi.rowSignatures(imageSignatureCustomer, imageSignatureTecnico),
           MethodPdfApi.tableBottomSignature()
         ]
       )
@@ -72,16 +69,13 @@ class PdfApi{
   }
 
   static Future<File> generatePDFCorrectivo({
-    required ByteData imageSignatureCustomer,
-    required ByteData imageSignatureTecnico,
+    required Uint8List imageSignatureCustomer,
+    required Uint8List imageSignatureTecnico,
     required ReporteServicio reporteServicio
   })async{
     final pdf=pw.Document();
     final ByteData data = await rootBundle.load('assets/images/logo.png');
     final Uint8List logo=data.buffer.asUint8List();
-
-    final Uint8List firmaCustomer= imageSignatureCustomer.buffer.asUint8List();
-    final Uint8List firmaTecnico= imageSignatureTecnico.buffer.asUint8List();
 
     final String checkIcon = await rootBundle.loadString('assets/images/check.svg');
     final correctivo = reporteServicio.servicioCorrectivo;
@@ -124,7 +118,7 @@ class PdfApi{
           MethodPdfApi.datosporUnidadesMedidas(datosfuncionamiento),
           MethodPdfApi.onlyRowTable("Observaciones: ", 3,datosfuncionamiento.observaciones),
           
-          MethodPdfApi.rowSignatures(firmaCustomer, firmaTecnico),
+          MethodPdfApi.rowSignatures(imageSignatureCustomer, imageSignatureTecnico),
           MethodPdfApi.tableBottomSignature()
         ]
       )

@@ -5,13 +5,20 @@ typedef StringCallback = void Function(String val);
 class TextFieldNumber extends StatefulWidget {
   final StringCallback callbackString;
   final String title;
-  const TextFieldNumber({Key? key,required this.callbackString,required this.title}) : super(key: key);
+  final String initialValue;
+  const TextFieldNumber({Key? key,required this.callbackString,required this.title,required this.initialValue}) : super(key: key);
 
   @override
   _TextFieldNumberState createState() => _TextFieldNumberState();
 }
 
 class _TextFieldNumberState extends State<TextFieldNumber> {
+  late TextEditingController _controller;
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(text: widget.initialValue);
+  }
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -21,6 +28,7 @@ class _TextFieldNumberState extends State<TextFieldNumber> {
         children: [
           Text(widget.title),
           TextFormField(
+            controller: _controller,
             keyboardType: TextInputType.number,
             decoration: const InputDecoration(
               // hintText: widget.title,

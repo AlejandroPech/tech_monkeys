@@ -130,7 +130,6 @@ class DatosFuncionamiento{
 }
 
 class Corriente{
-  int? id;
   String volt="";
   String amp="";
   static Corriente fromJson(Map<String,Object?> json){

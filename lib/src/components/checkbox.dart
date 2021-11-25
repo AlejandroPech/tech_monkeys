@@ -6,14 +6,20 @@ typedef BoolCallback = void Function(bool val);
 class Checkboxes extends StatefulWidget {
   final BoolCallback checked;
   final String title;
-  const Checkboxes({Key? key, required this.title,required this.checked}) : super(key: key);
+  final bool initialValue;
+  const Checkboxes({Key? key, required this.title,required this.checked,required this.initialValue}) : super(key: key);
 
   @override
   _CheckboxState createState() => _CheckboxState();
 }
 
 class _CheckboxState extends State<Checkboxes> {
-  bool isChecked = false;
+  late bool isChecked;
+  @override
+  void initState() {
+    super.initState();
+    isChecked=widget.initialValue;
+  }
   @override
   Widget build(BuildContext context) {
     return CheckboxListTile(

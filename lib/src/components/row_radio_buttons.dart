@@ -9,13 +9,15 @@ class RowRadioButtons extends StatefulWidget {
   final String option1;
   final String option2;
   final String option3;
+  final String initialValue;
   const RowRadioButtons({
     Key? key,
     required this.callbackString,
     required this.title,
     required this.option1,
     required this.option2,
-    required this.option3
+    required this.option3,
+    required this.initialValue,
   }) : super(key: key);
 
   @override
@@ -23,7 +25,20 @@ class RowRadioButtons extends StatefulWidget {
 }
 
 class _RowRadioButtonsState extends State<RowRadioButtons> {
-  int selectedValue=0;
+  late int selectedValue;
+  @override
+  void initState() {
+    super.initState();
+    if(widget.initialValue==widget.option1){
+      selectedValue=1;
+    }else if(widget.initialValue==widget.option2){
+      selectedValue=2;
+    }else if(widget.initialValue==widget.option3){
+      selectedValue=3;
+    }else{
+      selectedValue=0;
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Container(
